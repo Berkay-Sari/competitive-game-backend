@@ -1,5 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
+import com.dreamgames.backendengineeringcasestudy.entity.Country;
 import com.dreamgames.backendengineeringcasestudy.entity.User;
 import com.dreamgames.backendengineeringcasestudy.repo.UserRepository;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,9 @@ import java.util.Random;
 @Service
 public class UserService {
 
-    private static final String[] COUNTRIES = {"Turkey", "United States", "United Kingdom", "France", "Germany"};
     private final UserRepository userRepository;
-
+    private static final Country[] COUNTRIES = Country.values();
+    private static final Random RANDOM = new Random();
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -19,10 +20,9 @@ public class UserService {
 
     public User createUser() {
         User user = new User();
-        user.setCountry(COUNTRIES[new Random().nextInt(COUNTRIES.length)]);
+        user.setCountry(COUNTRIES[RANDOM.nextInt(COUNTRIES.length)]);
         return userRepository.save(user);
     }
-
 
     public User updateLevel(Long userId) {
         synchronized (userId) {

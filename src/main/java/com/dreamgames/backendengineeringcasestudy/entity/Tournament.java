@@ -3,20 +3,16 @@ package com.dreamgames.backendengineeringcasestudy.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User {
+public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long tournamentId;
 
-    private int level = 1;
-    private int coins = 5000;
-
-    @Enumerated(EnumType.STRING)
-    private Country country;
-
+    private boolean isActive = true;
 }
