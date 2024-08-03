@@ -2,6 +2,9 @@ package com.dreamgames.backendengineeringcasestudy.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -12,7 +15,7 @@ import lombok.*;
 public class TournamentParticipant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long participantId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,6 +28,9 @@ public class TournamentParticipant {
     private int score = 0;
 
     private boolean rewardClaimed = false;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public TournamentParticipant(User user, TournamentGroup tournamentGroup) {
         this.user = user;

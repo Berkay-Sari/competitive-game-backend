@@ -11,11 +11,13 @@ import java.util.Random;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TournamentParticipantService tournamentParticipantService;
     private static final Country[] COUNTRIES = Country.values();
     private static final Random RANDOM = new Random();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TournamentParticipantService tournamentParticipantService) {
         this.userRepository = userRepository;
+        this.tournamentParticipantService = tournamentParticipantService;
     }
 
     public User createUser() {
@@ -25,12 +27,19 @@ public class UserService {
     }
 
     public User updateLevel(Long userId) {
+        User user;
         synchronized (userId) {
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
             user.setLevel(user.getLevel() + 1);
             user.setCoins(user.getCoins() + 25);
-            return userRepository.save(user);
+            user = userRepository.save(user);
         }
+
+        if (tournamentParticipantService.hasCompetitionBeginForUser(user)) {
+            tournamentParticipantService.increaseUserScore(user);
+        }
+
+        return user;
     }
 }
 

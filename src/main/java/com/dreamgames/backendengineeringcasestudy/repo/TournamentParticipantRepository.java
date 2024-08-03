@@ -15,19 +15,20 @@ public interface TournamentParticipantRepository extends JpaRepository<Tournamen
             "AND participant.tournamentGroup.tournament.isActive = false")
     Optional<TournamentParticipant> findUnclaimedRewardForInactiveTournamentByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT participant FROM TournamentParticipant participant " +
-            "WHERE participant.user.id = :userId AND participant.tournamentGroup.tournament.tournamentId = :tournamentId")
-    Optional<TournamentParticipant> findParticipantByUserIdAndTournamentId(@Param("userId") Long userId,
-                                                                           @Param("tournamentId") Long tournamentId);
+    Optional<TournamentParticipant> findByUserIdAndTournamentGroupTournamentId(Long userId, Long tournamentId);
 
-    Long countByTournamentGroupGroupId(Long groupId);
+    Long countByTournamentGroupId(Long groupId);
 
     @Query("SELECT participants " +
             "FROM TournamentParticipant participants " +
-            "WHERE participants.tournamentGroup.groupId = :groupId " +
+            "WHERE participants.tournamentGroup.id = :groupId " +
             "ORDER BY participants.score DESC")
     List<TournamentParticipant> findParticipantsByGroupIdOrderedByScore(Long groupId);
 
+    @Query("SELECT participants " +
+            "FROM TournamentParticipant participants " +
+            "WHERE participants.tournamentGroup.tournament.id = :tournamentId ")
+    List<TournamentParticipant> findParticipantsByTournamentId(Long tournamentId);
 
 }
 

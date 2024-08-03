@@ -12,7 +12,7 @@ import lombok.*;
 public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tournamentId;
+    private Long id;
 
     private boolean isActive = true;
 }

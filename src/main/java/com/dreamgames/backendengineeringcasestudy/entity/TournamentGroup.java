@@ -11,7 +11,7 @@ import lombok.*;
 public class TournamentGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupId;
+    private Long id;
 
     private boolean isActive = false;
 

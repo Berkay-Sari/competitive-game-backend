@@ -1,6 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.controller;
 
-import com.dreamgames.backendengineeringcasestudy.entity.TournamentParticipant;
+import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipantResponse;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ public class TournamentController {
     }
 
     @PostMapping("/enter-tournament/{userId}")
-    public List<TournamentParticipant> enterTournament(@PathVariable Long userId) {
+    public List<TournamentParticipantResponse> enterTournament(@PathVariable Long userId) {
         return tournamentService.enterTournament(userId);
     }
 
