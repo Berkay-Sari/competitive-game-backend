@@ -34,6 +34,7 @@ public class TournamentParticipantService {
                     .findByUserIdAndTournamentGroupTournamentId(user.getId(), tournamentService.getCurrentTournament().getId())
                     .orElseThrow(() -> new ObjectNotFoundException(TournamentParticipant.class.getName(), user.getId()));
             tournamentParticipant.setScore(tournamentParticipant.getScore() + 1);
+            tournamentService.incrementCountryScore(user.getCountry());
             tournamentParticipantRepository.save(tournamentParticipant);
         }
     }

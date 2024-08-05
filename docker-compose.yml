@@ -7,6 +7,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - DATA_FILE_PATH=/appdata/countryLeaderboard.dat
+    volumes:
+      - ./appdata:/appdata
     ports:
       - '8080:8080'
     networks:
