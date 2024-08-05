@@ -51,28 +51,39 @@ public class TournamentParticipantService {
     }
 
     public User claimReward(Long userId) {
-        TournamentParticipant tournamentParticipant = tournamentParticipantRepository
-                .findUnclaimedRewardForInactiveTournamentByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("No unclaimed reward found for the user"));
+        if (tournamentService.getCurrentTournament() != null) {
+            boolean isParticipant = tournamentParticipantRepository
+                    .findByUserIdAndTournamentGroupTournamentId(userId, tournamentService.getCurrentTournament().getId())
+                    .isPresent();
 
-        if (tournamentParticipant.getTournamentGroup().getTournament().isActive()) {
-            throw new IllegalArgumentException("Tournament is still active");
+            if (isParticipant) {
+                throw new IllegalArgumentException("User has no unclaimed rewards");
+            }
         }
 
-        if (tournamentParticipant.isRewardClaimed()) {
-            throw new IllegalArgumentException("Reward already claimed");
+        List<TournamentParticipant> participations = tournamentParticipantRepository
+                .findByUserIdOrderByCreatedAtDesc(userId);
+
+        if (participations.isEmpty()) {
+            throw new IllegalArgumentException("User never participated in a tournament");
+        }
+
+        TournamentParticipant lastParticipation = participations.get(0);
+
+        if(lastParticipation.isRewardClaimed()) {
+            throw new IllegalArgumentException("User has already claimed rewards");
         }
 
         List<TournamentParticipant> participants = tournamentParticipantRepository
-                .findParticipantsByGroupIdOrderedByScore(tournamentParticipant.getTournamentGroup().getId());
+                .findByTournamentGroupIdOrderByScoreDesc(lastParticipation.getTournamentGroup().getId());
 
-        int rank = participants.indexOf(tournamentParticipant) + 1;
+        int rank = participants.indexOf(lastParticipation) + 1;
         int reward = 0;
 
         if (rank == 1) {
-            reward = 10000;
+            reward = TournamentService.FIRST_PLACE_REWARD;
         } else if (rank == 2) {
-            reward = 5000;
+            reward = TournamentService.SECOND_PLACE_REWARD;
         }
 
         if (reward > 0) {
@@ -81,22 +92,22 @@ public class TournamentParticipantService {
                         .orElseThrow(() -> new ObjectNotFoundException(User.class.getName(), userId));
                 user.setCoins(user.getCoins() + reward);
                 userRepository.save(user);
-                tournamentParticipant.setRewardClaimed(true);
-                tournamentParticipantRepository.save(tournamentParticipant);
+                lastParticipation.setRewardClaimed(true);
+                tournamentParticipantRepository.save(lastParticipation);
                 return user;
             }
         } else {
-            throw new IllegalArgumentException("No reward for the given rank");
+            throw new IllegalArgumentException("No reward for the rank: " + rank);
         }
     }
 
     public int getGroupRank(Long userId, Long tournamentId) {
         TournamentParticipant tournamentParticipant = tournamentParticipantRepository
                 .findByUserIdAndTournamentGroupTournamentId(userId, tournamentId)
-                .orElseThrow(() -> new IllegalArgumentException("No participation found for the given tournament and user"));
+                .orElseThrow(() -> new IllegalArgumentException("No participation found"));
 
         List<TournamentParticipant> participants = tournamentParticipantRepository
-                .findParticipantsByGroupIdOrderedByScore(tournamentParticipant.getTournamentGroup().getId());
+                .findByTournamentGroupIdOrderByScoreDesc(tournamentParticipant.getTournamentGroup().getId());
 
         return participants.indexOf(tournamentParticipant) + 1;
     }

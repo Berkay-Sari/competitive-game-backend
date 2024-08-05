@@ -26,7 +26,7 @@ public class TournamentGroupService {
 
     public List<TournamentParticipantResponse> getGroupLeaderboard(Long groupId) {
         List<TournamentParticipant> participants = tournamentParticipantRepository
-                .findParticipantsByGroupIdOrderedByScore(groupId);
+                .findByTournamentGroupIdOrderByScoreDesc(groupId);
 
         return participants.stream()
                 .map(tournamentParticipantResponseMapper)
@@ -35,7 +35,7 @@ public class TournamentGroupService {
 
     public Map<Country, Integer> getCountryLeaderboard(Long tournamentId) {
         List<TournamentParticipant> participants = tournamentParticipantRepository
-                .findParticipantsByTournamentId(tournamentId);
+                .findByTournamentGroupTournamentId(tournamentId);
 
         Map<Country, Integer> countryScores = new HashMap<>();
         for (TournamentParticipant participant : participants) {
