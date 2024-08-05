@@ -1,13 +1,13 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.entity.*;
+import com.dreamgames.backendengineeringcasestudy.exception.*;
 import com.dreamgames.backendengineeringcasestudy.repo.*;
 import com.dreamgames.backendengineeringcasestudy.response.CountryLeaderboardResponse;
 import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipantResponse;
 import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipantResponseMapper;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -64,24 +64,29 @@ public class TournamentService {
         LocalTime targetTime = LocalTime.of(20, 0);
 
         if (currentTimeUtc.isAfter(targetTime)) {
-           // return;
+           return;
         }
 
         Tournament tournament = tournamentRepository.findByIsActiveTrue().orElse(new Tournament());
         currentTournament = tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0 0 * * ?", zone = "UTC")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void createTournament() {
         currentTournament = tournamentRepository.save(new Tournament());
     }
 
-    @Scheduled(cron = "0 0 20 * * ?", zone = "UTC")
+    @Scheduled(cron = "0 20 17 * * ?")
     public void endTournament() {
         if (currentTournament != null) {
             saveCountryLeaderboard(currentTournament);
             countryLeaderboard.forEach((country, score) -> countryLeaderboard.put(country, 0L));
             currentTournament.setActive(false);
+            tournamentGroupRepository.findByTournamentId(currentTournament.getId())
+                    .forEach(tournamentGroup -> {
+                        tournamentGroup.setActive(false);
+                        tournamentGroupRepository.save(tournamentGroup);
+                    });
             tournamentRepository.save(currentTournament);
             currentTournament = null;
         }
@@ -89,18 +94,18 @@ public class TournamentService {
 
     public List<TournamentParticipantResponse> enterTournament(Long userId) {
         if (currentTournament == null) {
-            throw new IllegalArgumentException("No active tournament");
+            throw new NoActiveTournamentException();
         }
 
         boolean isParticipant = tournamentParticipantRepository
                 .findByUserIdAndTournamentGroupTournamentId(userId, currentTournament.getId()).isPresent();
 
         if (isParticipant) {
-            throw new IllegalArgumentException("User is already a participant");
+            throw new UserAlreadyParticipantException();
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException(User.class.getName(), userId));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         validateTournamentEligibility(user);
 
@@ -130,15 +135,15 @@ public class TournamentService {
                 .findByUserIdOrderByCreatedAtDesc(user.getId());
 
         if (!participations.isEmpty() && !participations.get(0).isRewardClaimed()) {
-            throw new IllegalArgumentException("User has unclaimed rewards from the last tournament");
+            throw new UnclaimedRewardException();
         }
 
         if (user.getLevel() < MINIMUM_LEVEL) {
-            throw new IllegalArgumentException("Must be at least " + MINIMUM_LEVEL + "level");
+            throw new MinimumLevelRequirementException(MINIMUM_LEVEL);
         }
 
         if (user.getCoins() < TOURNAMENT_ENTRY_FEE) {
-            throw new IllegalArgumentException("Must have " + TOURNAMENT_ENTRY_FEE +" coins");
+            throw new InsufficientCoinsException(TOURNAMENT_ENTRY_FEE);
         }
     }
 
@@ -194,7 +199,7 @@ public class TournamentService {
     }
 
     private void saveCountryLeaderboardToFile() {
-        try (FileOutputStream fos = new FileOutputStream(countryLeaderboardFilePath);
+        try (FileOutputStream fos = new FileOutputStream("countryLeaderboard.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(countryLeaderboard);
         } catch (IOException e) {
@@ -204,7 +209,7 @@ public class TournamentService {
 
     @SuppressWarnings("unchecked")
     private void loadCountryLeaderboardFromFile() {
-        File file = new File(countryLeaderboardFilePath);
+        File file = new File("countryLeaderboard.dat");
         if (!file.exists()) {
             Arrays.stream(Country.values()).forEach(country -> countryLeaderboard.put(country, 0L));
             return;

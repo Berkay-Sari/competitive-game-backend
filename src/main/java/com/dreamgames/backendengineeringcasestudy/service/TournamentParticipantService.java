@@ -3,9 +3,9 @@ package com.dreamgames.backendengineeringcasestudy.service;
 import com.dreamgames.backendengineeringcasestudy.entity.TournamentGroup;
 import com.dreamgames.backendengineeringcasestudy.entity.TournamentParticipant;
 import com.dreamgames.backendengineeringcasestudy.entity.User;
+import com.dreamgames.backendengineeringcasestudy.exception.*;
 import com.dreamgames.backendengineeringcasestudy.repo.TournamentParticipantRepository;
 import com.dreamgames.backendengineeringcasestudy.repo.UserRepository;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,13 +26,15 @@ public class TournamentParticipantService {
 
     public void increaseUserScore(User user) {
         if (tournamentService.getCurrentTournament() == null) {
-            throw new IllegalArgumentException("No active tournament");
+            throw new NoActiveTournamentException();
         }
+
+        Long tournamentId = tournamentService.getCurrentTournament().getId();
 
         synchronized (user.getId()) {
             TournamentParticipant tournamentParticipant = tournamentParticipantRepository
-                    .findByUserIdAndTournamentGroupTournamentId(user.getId(), tournamentService.getCurrentTournament().getId())
-                    .orElseThrow(() -> new ObjectNotFoundException(TournamentParticipant.class.getName(), user.getId()));
+                    .findByUserIdAndTournamentGroupTournamentId(user.getId(), tournamentId)
+                    .orElseThrow(() -> new ParticipantNotFoundException(user.getId(), tournamentId));
             tournamentParticipant.setScore(tournamentParticipant.getScore() + 1);
             tournamentService.incrementCountryScore(user.getCountry());
             tournamentParticipantRepository.save(tournamentParticipant);
@@ -58,7 +60,7 @@ public class TournamentParticipantService {
                     .isPresent();
 
             if (isParticipant) {
-                throw new IllegalArgumentException("User has no unclaimed rewards");
+                throw new TournamentNotFinishedException();
             }
         }
 
@@ -66,13 +68,13 @@ public class TournamentParticipantService {
                 .findByUserIdOrderByCreatedAtDesc(userId);
 
         if (participations.isEmpty()) {
-            throw new IllegalArgumentException("User never participated in a tournament");
+            throw new UserNeverParticipatedException();
         }
 
         TournamentParticipant lastParticipation = participations.get(0);
 
         if(lastParticipation.isRewardClaimed()) {
-            throw new IllegalArgumentException("User has already claimed rewards");
+            throw new RewardAlreadyClaimedException();
         }
 
         List<TournamentParticipant> participants = tournamentParticipantRepository
@@ -89,8 +91,7 @@ public class TournamentParticipantService {
 
         if (reward > 0) {
             synchronized (userId) {
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new ObjectNotFoundException(User.class.getName(), userId));
+                User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
                 user.setCoins(user.getCoins() + reward);
                 userRepository.save(user);
                 lastParticipation.setRewardClaimed(true);
@@ -98,14 +99,14 @@ public class TournamentParticipantService {
                 return user;
             }
         } else {
-            throw new IllegalArgumentException("No reward for the rank: " + rank);
+            throw new NoRewardForRankException(rank);
         }
     }
 
     public int getGroupRank(Long userId, Long tournamentId) {
         TournamentParticipant tournamentParticipant = tournamentParticipantRepository
                 .findByUserIdAndTournamentGroupTournamentId(userId, tournamentId)
-                .orElseThrow(() -> new IllegalArgumentException("No participation found"));
+                .orElseThrow(() -> new ParticipantNotFoundException(userId, tournamentId));
 
         List<TournamentParticipant> participants = tournamentParticipantRepository
                 .findByTournamentGroupIdOrderByScoreDesc(tournamentParticipant.getTournamentGroup().getId());

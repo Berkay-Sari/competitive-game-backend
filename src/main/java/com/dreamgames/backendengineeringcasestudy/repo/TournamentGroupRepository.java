@@ -19,5 +19,6 @@ public interface TournamentGroupRepository extends JpaRepository<TournamentGroup
                             "WHERE participant.tournamentGroup = g) DESC")
     List<TournamentGroup> findGroupsWithoutUserFromCountry(Long tournamentId, Country country, Pageable pageable);
 
+    List<TournamentGroup> findByTournamentId(Long tournamentId);
 }
 
