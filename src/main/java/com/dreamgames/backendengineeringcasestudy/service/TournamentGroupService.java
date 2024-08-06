@@ -1,7 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
-import com.dreamgames.backendengineeringcasestudy.entity.Country;
 import com.dreamgames.backendengineeringcasestudy.entity.TournamentParticipant;
+import com.dreamgames.backendengineeringcasestudy.exception.GroupNotFoundException;
 import com.dreamgames.backendengineeringcasestudy.repo.TournamentParticipantRepository;
 import com.dreamgames.backendengineeringcasestudy.response.CountryLeaderboardResponse;
 import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipantResponse;
@@ -9,7 +9,6 @@ import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipant
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TournamentGroupService {
@@ -28,6 +27,10 @@ public class TournamentGroupService {
     public List<TournamentParticipantResponse> getGroupLeaderboard(Long groupId) {
         List<TournamentParticipant> participants = tournamentParticipantRepository
                 .findByTournamentGroupIdOrderByScoreDesc(groupId);
+
+        if (participants.isEmpty()) {
+            throw new GroupNotFoundException(groupId);
+        }
 
         return participants.stream()
                 .map(tournamentParticipantResponseMapper)

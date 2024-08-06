@@ -1,6 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.entity;
 
 
+import com.dreamgames.backendengineeringcasestudy.enums.Country;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

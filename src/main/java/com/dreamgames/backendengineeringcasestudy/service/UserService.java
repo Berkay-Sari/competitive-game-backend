@@ -1,7 +1,8 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
-import com.dreamgames.backendengineeringcasestudy.entity.Country;
+import com.dreamgames.backendengineeringcasestudy.enums.Country;
 import com.dreamgames.backendengineeringcasestudy.entity.User;
+import com.dreamgames.backendengineeringcasestudy.exception.UserNotFoundException;
 import com.dreamgames.backendengineeringcasestudy.repo.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class UserService {
     public User updateLevel(Long userId) {
         User user;
         synchronized (userId) {
-            user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
             user.setLevel(user.getLevel() + 1);
             user.setCoins(user.getCoins() + 25);
             user = userRepository.save(user);

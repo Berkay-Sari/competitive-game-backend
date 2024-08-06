@@ -1,6 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.repo;
 
-import com.dreamgames.backendengineeringcasestudy.entity.Country;
+import com.dreamgames.backendengineeringcasestudy.enums.Country;
 import com.dreamgames.backendengineeringcasestudy.entity.TournamentGroup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.response;
 
-import com.dreamgames.backendengineeringcasestudy.entity.Country;
+import com.dreamgames.backendengineeringcasestudy.enums.Country;
 
 public record CountryLeaderboardResponse(
         Country country,

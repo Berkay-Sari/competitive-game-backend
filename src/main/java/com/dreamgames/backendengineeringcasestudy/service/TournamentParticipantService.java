@@ -80,6 +80,10 @@ public class TournamentParticipantService {
         List<TournamentParticipant> participants = tournamentParticipantRepository
                 .findByTournamentGroupIdOrderByScoreDesc(lastParticipation.getTournamentGroup().getId());
 
+        if (participants.size() < 5) {
+            throw new NotEnoughParticipantsException(participants.size());
+        }
+
         int rank = participants.indexOf(lastParticipation) + 1;
         int reward = 0;
 

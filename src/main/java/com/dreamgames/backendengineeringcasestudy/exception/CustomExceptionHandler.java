@@ -9,22 +9,26 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
 
-    private static final Map<Class<? extends Exception>, HttpStatus> EXCEPTION_STATUS_MAP = Map.of(
-            NoActiveTournamentException.class, HttpStatus.BAD_REQUEST,
-            UserAlreadyParticipantException.class, HttpStatus.BAD_REQUEST,
-            UserNotFoundException.class, HttpStatus.NOT_FOUND,
-            UnclaimedRewardException.class, HttpStatus.BAD_REQUEST,
-            MinimumLevelRequirementException.class, HttpStatus.BAD_REQUEST,
-            InsufficientCoinsException.class, HttpStatus.BAD_REQUEST,
-            UserNeverParticipatedException.class, HttpStatus.BAD_REQUEST,
-            RewardAlreadyClaimedException.class, HttpStatus.BAD_REQUEST,
-            NoRewardForRankException.class, HttpStatus.BAD_REQUEST,
-            TournamentNotFinishedException.class, HttpStatus.BAD_REQUEST
-    );
+    private static final Map<Class<? extends Exception>, HttpStatus> EXCEPTION_STATUS_MAP = Stream.of(
+            Map.entry(NoActiveTournamentException.class, HttpStatus.NOT_FOUND),
+            Map.entry(UserAlreadyParticipantException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(UserNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(UnclaimedRewardException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(MinimumLevelRequirementException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(InsufficientCoinsException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(UserNeverParticipatedException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(RewardAlreadyClaimedException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(NoRewardForRankException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(TournamentNotFinishedException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(GroupNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(NotEnoughParticipantsException.class, HttpStatus.BAD_REQUEST)
+    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     private ResponseEntity<ErrorResponse> buildResponseEntity(Exception ex, HttpStatus status, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
