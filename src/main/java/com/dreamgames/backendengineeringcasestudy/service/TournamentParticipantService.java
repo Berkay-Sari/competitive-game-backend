@@ -73,7 +73,7 @@ public class TournamentParticipantService {
 
         TournamentParticipant lastParticipation = participations.get(0);
 
-        if(lastParticipation.isRewardClaimed()) {
+        if (lastParticipation.isRewardClaimed()) {
             throw new RewardAlreadyClaimedException();
         }
 

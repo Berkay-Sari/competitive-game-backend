@@ -2,7 +2,7 @@ import concurrent.futures
 import requests
 
 # URL of the endpoint
-url = 'http://localhost:8080/users/update-level/2'
+url = 'http://localhost:8080/users/update-level/1'
 
 # Function to send a single PUT request
 def send_put_request():

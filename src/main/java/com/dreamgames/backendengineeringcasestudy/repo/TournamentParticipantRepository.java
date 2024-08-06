@@ -14,8 +14,6 @@ public interface TournamentParticipantRepository extends JpaRepository<Tournamen
 
     List<TournamentParticipant> findByTournamentGroupIdOrderByScoreDesc(Long groupId);
 
-    List<TournamentParticipant> findByTournamentGroupTournamentId(Long tournamentId);
-
     List<TournamentParticipant> findByUserIdOrderByCreatedAtDesc(Long id);
 }
 

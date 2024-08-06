@@ -9,6 +9,7 @@ import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipant
 import com.dreamgames.backendengineeringcasestudy.response.TournamentParticipantResponseMapper;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -33,6 +34,7 @@ public class TournamentService {
     private final TournamentParticipantResponseMapper tournamentParticipantResponseMapper;
 
     @Getter
+    @Setter
     private Tournament currentTournament;
     private final ConcurrentHashMap<Country, Long> countryLeaderboard = new ConcurrentHashMap<>();
 
@@ -72,12 +74,12 @@ public class TournamentService {
         currentTournament = tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?", zone = "UTC")
     public void createTournament() {
         currentTournament = tournamentRepository.save(new Tournament());
     }
 
-    @Scheduled(cron = "0 20 17 * * ?")
+    @Scheduled(cron = "0 0 20 * * ?", zone = "UTC")
     public void endTournament() {
         if (currentTournament != null) {
             saveCountryLeaderboard(currentTournament);
@@ -105,8 +107,7 @@ public class TournamentService {
             throw new UserAlreadyParticipantException();
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         validateTournamentEligibility(user);
 
@@ -132,19 +133,37 @@ public class TournamentService {
     }
 
     private void validateTournamentEligibility(User user) {
-        List<TournamentParticipant> participations = tournamentParticipantRepository
-                .findByUserIdOrderByCreatedAtDesc(user.getId());
-
-        if (!participations.isEmpty() && !participations.get(0).isRewardClaimed()) {
-            throw new UnclaimedRewardException();
-        }
-
         if (user.getLevel() < MINIMUM_LEVEL) {
             throw new MinimumLevelRequirementException(MINIMUM_LEVEL);
         }
 
         if (user.getCoins() < TOURNAMENT_ENTRY_FEE) {
             throw new InsufficientCoinsException(TOURNAMENT_ENTRY_FEE);
+        }
+
+        List<TournamentParticipant> participations = tournamentParticipantRepository
+                .findByUserIdOrderByCreatedAtDesc(user.getId());
+
+        if (participations.isEmpty()) {
+            return;
+        }
+
+        TournamentParticipant lastParticipation = participations.get(0);
+        if (lastParticipation.isRewardClaimed()) {
+            return;
+        }
+
+        Long tournamentGroupId = lastParticipation.getTournamentGroup().getId();
+        List<TournamentParticipant> participants = tournamentParticipantRepository
+                .findByTournamentGroupIdOrderByScoreDesc(tournamentGroupId);
+
+        if (participants.size() != 5) {
+            return;
+        }
+
+        int rank = participants.indexOf(lastParticipation) + 1;
+        if (rank < 3) {
+            throw new UnclaimedRewardException();
         }
     }
 
@@ -200,7 +219,7 @@ public class TournamentService {
     }
 
     private void saveCountryLeaderboardToFile() {
-        try (FileOutputStream fos = new FileOutputStream("countryLeaderboard.dat");
+        try (FileOutputStream fos = new FileOutputStream(countryLeaderboardFilePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(countryLeaderboard);
         } catch (IOException e) {
@@ -210,7 +229,7 @@ public class TournamentService {
 
     @SuppressWarnings("unchecked")
     private void loadCountryLeaderboardFromFile() {
-        File file = new File("countryLeaderboard.dat");
+        File file = new File(countryLeaderboardFilePath);
         if (!file.exists()) {
             Arrays.stream(Country.values()).forEach(country -> countryLeaderboard.put(country, 0L));
             return;
