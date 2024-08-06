@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "usr") // "user" is a reserved keyword in SQL
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
