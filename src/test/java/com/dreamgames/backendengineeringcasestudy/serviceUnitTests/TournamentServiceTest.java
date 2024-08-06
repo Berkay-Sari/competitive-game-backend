@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -57,7 +58,11 @@ public class TournamentServiceTest {
     }
 
     @Test
-    void should_CreateFirstTournament_When_ApplicationReadyEventDuringTournamentTime() {
+    void should_CreateFirstTournament_When_ApplicationReadyEventDuringTournamentTime() throws Exception {
+        Field field = TournamentService.class.getDeclaredField("countryLeaderboardFilePath");
+        field.setAccessible(true);
+        field.set(tournamentService, "/appdata/countryLeaderboard.dat");
+
         when(tournamentRepository.findByIsActiveTrue()).thenReturn(Optional.empty());
         Tournament tournament = new Tournament();
         tournament.setId(1L);
