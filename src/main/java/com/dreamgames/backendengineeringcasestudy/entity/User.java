@@ -15,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int level = 20;
+    private int level = 1;
 
     private int coins = 5000;
 
