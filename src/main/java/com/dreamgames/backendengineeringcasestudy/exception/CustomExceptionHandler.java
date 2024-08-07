@@ -27,7 +27,9 @@ public class CustomExceptionHandler {
             Map.entry(NoRewardForRankException.class, HttpStatus.BAD_REQUEST),
             Map.entry(TournamentNotFinishedException.class, HttpStatus.BAD_REQUEST),
             Map.entry(GroupNotFoundException.class, HttpStatus.NOT_FOUND),
-            Map.entry(NotEnoughParticipantsException.class, HttpStatus.BAD_REQUEST)
+            Map.entry(NotEnoughParticipantsException.class, HttpStatus.BAD_REQUEST),
+            Map.entry(ParticipantNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(TournamentNotFoundException.class, HttpStatus.NOT_FOUND)
     ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     private ResponseEntity<ErrorResponse> buildResponseEntity(Exception ex, HttpStatus status, WebRequest request) {

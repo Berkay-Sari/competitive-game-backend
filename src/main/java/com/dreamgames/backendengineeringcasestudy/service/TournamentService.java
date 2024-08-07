@@ -185,6 +185,10 @@ public class TournamentService {
     public List<CountryLeaderboardResponse> getCountryLeaderboardResponse(Long tournamentId) {
         List<CountryLeaderboardResponse> leaderboard;
 
+        if (tournamentRepository.findById(tournamentId).isEmpty()) {
+            throw new TournamentNotFoundException(tournamentId);
+        }
+
         if (currentTournament.getId().equals(tournamentId)) {
             leaderboard = countryLeaderboard.entrySet().stream()
                     .map(entry -> new CountryLeaderboardResponse(entry.getKey(), entry.getValue()))
