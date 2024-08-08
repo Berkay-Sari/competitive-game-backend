@@ -120,6 +120,8 @@ public class TournamentServiceTest {
         tournamentService.setCurrentTournament(tournament);
         User user = new User();
         user.setId(1L);
+        user.setLevel(22);
+        user.setCoins(999999);
         TournamentParticipant lastParticipation = new TournamentParticipant();
         lastParticipation.setRewardClaimed(false);
         TournamentGroup group = new TournamentGroup(tournament);
@@ -151,6 +153,7 @@ public class TournamentServiceTest {
         tournamentService.setCurrentTournament(tournament);
         User user = new User();
         user.setLevel(10);
+        user.setCoins(99999);
         when(tournamentParticipantRepository.findByUserIdAndTournamentGroupTournamentId(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -165,6 +168,7 @@ public class TournamentServiceTest {
         Tournament tournament = new Tournament();
         tournamentService.setCurrentTournament(tournament);
         User user = new User();
+        user.setLevel(22);
         user.setCoins(500);
         when(tournamentParticipantRepository.findByUserIdAndTournamentGroupTournamentId(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
@@ -183,6 +187,7 @@ public class TournamentServiceTest {
         user.setId(1L);
         user.setCoins(2000);
         user.setLevel(30);
+        user.setCountry(Country.TURKEY);
         when(tournamentParticipantRepository.findByUserIdAndTournamentGroupTournamentId(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));

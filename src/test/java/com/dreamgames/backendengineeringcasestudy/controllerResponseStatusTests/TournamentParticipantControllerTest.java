@@ -71,7 +71,7 @@ class TournamentParticipantControllerTest {
                         .param("tournamentId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(1));
+                .andExpect(jsonPath("$.rank").value(1));
     }
 
     @Test
