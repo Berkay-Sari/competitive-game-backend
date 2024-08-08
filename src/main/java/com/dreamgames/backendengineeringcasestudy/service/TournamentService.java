@@ -100,36 +100,42 @@ public class TournamentService {
             throw new NoActiveTournamentException();
         }
 
-        boolean isParticipant = tournamentParticipantRepository
-                .findByUserIdAndTournamentGroupTournamentId(userId, currentTournament.getId()).isPresent();
+        synchronized (userId) {
+            boolean isParticipant = tournamentParticipantRepository
+                    .findByUserIdAndTournamentGroupTournamentId(userId, currentTournament.getId()).isPresent();
 
-        if (isParticipant) {
-            throw new UserAlreadyParticipantException();
+            if (isParticipant) {
+                throw new UserAlreadyParticipantException();
+            }
+
+            User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+            validateTournamentEligibility(user);
+
+            Long tournamentId = currentTournament.getId();
+            Country userCountry = user.getCountry();
+            TournamentGroup tournamentGroup;
+
+            synchronized (userCountry) {
+                tournamentGroup = findMostFullyGroupWithoutUserFromCountry(tournamentId, userCountry);
+
+                if (!tournamentGroup.isActive() &&
+                        tournamentParticipantRepository.countByTournamentGroupId(tournamentGroup.getId()) == 4) {
+                    tournamentGroup.setActive(true);
+                }
+
+                tournamentGroup = tournamentGroupRepository.save(tournamentGroup);
+
+                user.setCoins(user.getCoins() - TOURNAMENT_ENTRY_FEE);
+                user = userRepository.save(user);
+
+                tournamentParticipantRepository.save(new TournamentParticipant(user, tournamentGroup));
+            }
+
+            List<TournamentParticipant> participantsByGroupIdOrderedByScore = tournamentParticipantRepository
+                    .findByTournamentGroupIdOrderByScoreDesc(tournamentGroup.getId());
+            return participantsByGroupIdOrderedByScore.stream().map(tournamentParticipantResponseMapper).toList();
         }
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-
-        validateTournamentEligibility(user);
-
-        Long tournamentId = currentTournament.getId();
-        Country userCountry = user.getCountry();
-        TournamentGroup tournamentGroup = findMostFullyGroupWithoutUserFromCountry(tournamentId, userCountry);
-
-        if (!tournamentGroup.isActive() &&
-                tournamentParticipantRepository.countByTournamentGroupId(tournamentGroup.getId()) == 4) {
-            tournamentGroup.setActive(true);
-        }
-
-        tournamentGroup = tournamentGroupRepository.save(tournamentGroup);
-
-        user.setCoins(user.getCoins() - TOURNAMENT_ENTRY_FEE);
-        user = userRepository.save(user);
-
-        tournamentParticipantRepository.save(new TournamentParticipant(user, tournamentGroup));
-
-        List<TournamentParticipant> participantsByGroupIdOrderedByScore = tournamentParticipantRepository
-                .findByTournamentGroupIdOrderByScoreDesc(tournamentGroup.getId());
-        return participantsByGroupIdOrderedByScore.stream().map(tournamentParticipantResponseMapper).toList();
     }
 
     private void validateTournamentEligibility(User user) {

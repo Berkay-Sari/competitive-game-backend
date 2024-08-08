@@ -28,8 +28,6 @@ public class TournamentGroupService {
             throw new GroupNotFoundException(groupId);
         }
 
-        return participants.stream()
-                .map(tournamentParticipantResponseMapper)
-                .toList();
+        return participants.stream().map(tournamentParticipantResponseMapper).toList();
     }
 }

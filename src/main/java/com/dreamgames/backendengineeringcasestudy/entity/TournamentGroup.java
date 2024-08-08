@@ -2,7 +2,6 @@ package com.dreamgames.backendengineeringcasestudy.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Getter
 @Setter
 @NoArgsConstructor

@@ -1,6 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.controller;
 
 import com.dreamgames.backendengineeringcasestudy.entity.User;
+import com.dreamgames.backendengineeringcasestudy.response.RankResponse;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentParticipantService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,8 @@ public class TournamentParticipantController {
     }
 
     @GetMapping("/get-group-rank")
-    public int getGroupRank(@RequestParam Long userId, @RequestParam Long tournamentId) {
-        return tournamentParticipantService.getGroupRank(userId, tournamentId);
+    public RankResponse getGroupRank(@RequestParam Long userId, @RequestParam Long tournamentId) {
+        int rank = tournamentParticipantService.getGroupRank(userId, tournamentId);
+        return new RankResponse(rank);
     }
 }

@@ -10,7 +10,6 @@ import java.util.Random;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final TournamentParticipantService tournamentParticipantService;
     private static final Country[] COUNTRIES = Country.values();

@@ -73,37 +73,37 @@ public class TournamentParticipantService {
 
         TournamentParticipant lastParticipation = participations.get(0);
 
-        if (lastParticipation.isRewardClaimed()) {
-            throw new RewardAlreadyClaimedException();
-        }
+        synchronized (userId) {
+            if (lastParticipation.isRewardClaimed()) {
+                throw new RewardAlreadyClaimedException();
+            }
 
-        List<TournamentParticipant> participants = tournamentParticipantRepository
-                .findByTournamentGroupIdOrderByScoreDesc(lastParticipation.getTournamentGroup().getId());
+            List<TournamentParticipant> participants = tournamentParticipantRepository
+                    .findByTournamentGroupIdOrderByScoreDesc(lastParticipation.getTournamentGroup().getId());
 
-        if (participants.size() < 5) {
-            throw new NotEnoughParticipantsException(participants.size());
-        }
+            if (participants.size() < 5) {
+                throw new NotEnoughParticipantsException(participants.size());
+            }
 
-        int rank = participants.indexOf(lastParticipation) + 1;
-        int reward = 0;
+            int rank = participants.indexOf(lastParticipation) + 1;
+            int reward = 0;
 
-        if (rank == 1) {
-            reward = TournamentService.FIRST_PLACE_REWARD;
-        } else if (rank == 2) {
-            reward = TournamentService.SECOND_PLACE_REWARD;
-        }
+            if (rank == 1) {
+                reward = TournamentService.FIRST_PLACE_REWARD;
+            } else if (rank == 2) {
+                reward = TournamentService.SECOND_PLACE_REWARD;
+            }
 
-        if (reward > 0) {
-            synchronized (userId) {
+            if (reward > 0) {
                 User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
                 user.setCoins(user.getCoins() + reward);
                 userRepository.save(user);
                 lastParticipation.setRewardClaimed(true);
                 tournamentParticipantRepository.save(lastParticipation);
                 return user;
+            } else {
+                throw new NoRewardForRankException(rank);
             }
-        } else {
-            throw new NoRewardForRankException(rank);
         }
     }
 
