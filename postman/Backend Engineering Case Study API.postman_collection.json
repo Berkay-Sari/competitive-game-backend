@@ -1,0 +1,721 @@
+{
+	"info": {
+		"_postman_id": "e864e812-9c0f-4639-b908-05830905ca53",
+		"name": "Backend Engineering Case Study API",
+		"description": "## **🪐Get started**\n\n> This collection serves as a showcase for Dream Games Backend Engineering Case Study. There are 7 endpoints. \n  \n\n## **📝Example responses**\n\n> I have documented many possible responses in collection using example responses. This enables you to walk through the different success and error responses for each request without having to configure different parameters.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21415403"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"create"
+					]
+				},
+				"description": "returns new user"
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:01:41 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 38,\n    \"level\": 1,\n    \"coins\": 5000,\n    \"country\": \"GERMANY\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Update Level",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/update-level/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"update-level",
+						"1"
+					]
+				},
+				"description": "update-level/{user_id}\n\nreturns updated user data"
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/update-level/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"update-level",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:03:56 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"level\": 29,\n    \"coins\": 13225,\n    \"country\": \"GERMANY\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Enter Tournament",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tournaments/enter-tournament/38",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tournaments",
+						"enter-tournament",
+						"38"
+					]
+				},
+				"description": "enter-tournament/{user_id}\n\nreturns joined group leaderboard."
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournaments/enter-tournament/22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournaments",
+								"enter-tournament",
+								"22"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:27:42 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"userId\": 22,\n        \"score\": 0,\n        \"country\": \"GERMANY\"\n    }\n]"
+				},
+				{
+					"name": "Already Participant",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/enter-tournament/38",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"enter-tournament",
+								"38"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:06:48 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": \"2024-08-08T04:06:48.2309311\",\n    \"status\": 400,\n    \"error\": \"Bad Request\",\n    \"message\": \"User is already a participant\",\n    \"path\": \"/tournaments/enter-tournament/36\"\n}"
+				},
+				{
+					"name": "Under 20 Level",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/enter-tournament/38",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"enter-tournament",
+								"38"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:10:25 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": \"2024-08-08T04:10:25.2339355\",\n    \"status\": 400,\n    \"error\": \"Bad Request\",\n    \"message\": \"Must be at least level 20\",\n    \"path\": \"/tournaments/enter-tournament/38\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Claim Reward",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tournament-participants/claim-reward/27",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tournament-participants",
+						"claim-reward",
+						"27"
+					]
+				},
+				"description": "claim-reward/{user_id}"
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament-participants/claim-reward/27",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament-participants",
+								"claim-reward",
+								"27"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:58:46 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 27,\n    \"level\": 22,\n    \"coins\": 13050,\n    \"country\": \"TURKEY\"\n}"
+				},
+				{
+					"name": "Rank 5",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament-participants/claim-reward/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament-participants",
+								"claim-reward",
+								"17"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:57:42 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": \"2024-08-08T04:57:42.6376525\",\n    \"status\": 400,\n    \"error\": \"Bad Request\",\n    \"message\": \"No reward for the rank: 5\",\n    \"path\": \"/tournament-participants/claim-reward/17\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Group Rank",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tournament-participants/get-group-rank?userId=1&tournamentId=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tournament-participants",
+						"get-group-rank"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						},
+						{
+							"key": "tournamentId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament-participants/get-group-rank?userId=1&tournamentId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament-participants",
+								"get-group-rank"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "tournamentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:47:50 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"rank\": 1\n}"
+				}
+			]
+		},
+		{
+			"name": "Group Leaderboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "get-group-leaderboard/{group_id}"
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament-groups/get-group-leaderboard/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament-groups",
+								"get-group-leaderboard",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:39:53 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"userId\": 2,\n        \"score\": 1,\n        \"country\": \"GERMANY\"\n    },\n    {\n        \"userId\": 5,\n        \"score\": 0,\n        \"country\": \"UNITED_STATES\"\n    },\n    {\n        \"userId\": 6,\n        \"score\": 0,\n        \"country\": \"UNITED_KINGDOM\"\n    },\n    {\n        \"userId\": 19,\n        \"score\": 0,\n        \"country\": \"FRANCE\"\n    },\n    {\n        \"userId\": 27,\n        \"score\": 0,\n        \"country\": \"TURKEY\"\n    }\n]"
+				},
+				{
+					"name": "Group Not Found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournament-groups/get-group-leaderboard/99",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournament-groups",
+								"get-group-leaderboard",
+								"99"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:40:58 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": \"2024-08-08T04:40:58.1039338\",\n    \"status\": 404,\n    \"error\": \"Not Found\",\n    \"message\": \"Group with id 99 not found\",\n    \"path\": \"/tournament-groups/get-group-leaderboard/99\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Country Leaderboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "get-country-leaderboard/{tournament_id}\n\nreturns country leaderboard sorted by score"
+			},
+			"response": [
+				{
+					"name": "Example",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournaments/get-country-leaderboard/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournaments",
+								"get-country-leaderboard",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:31:28 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"country\": \"GERMANY\",\n        \"score\": 1\n    },\n    {\n        \"country\": \"TURKEY\",\n        \"score\": 0\n    },\n    {\n        \"country\": \"FRANCE\",\n        \"score\": 0\n    },\n    {\n        \"country\": \"UNITED_STATES\",\n        \"score\": 0\n    },\n    {\n        \"country\": \"UNITED_KINGDOM\",\n        \"score\": 0\n    }\n]"
+				},
+				{
+					"name": "Tournament Not Found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/get-country-leaderboard/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"get-country-leaderboard",
+								"5"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 08 Aug 2024 01:32:08 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": \"2024-08-08T04:32:08.5715679\",\n    \"status\": 404,\n    \"error\": \"Not Found\",\n    \"message\": \"Tournament not found for ID: 5\",\n    \"path\": \"/tournaments/get-country-leaderboard/5\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}
