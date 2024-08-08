@@ -237,7 +237,6 @@ public class TournamentService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void loadCountryLeaderboardFromFile() {
         File file = new File(countryLeaderboardFilePath);
         if (!file.exists()) {
